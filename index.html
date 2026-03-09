@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An advanced, feature-rich To-Do List application with priorities, search, filtering, and dark/light theme support." />
+  <title>TaskFlow — Advanced To-Do List</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== BACKGROUND BLOBS ===== -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div class="app-wrapper">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-icon">⚡</span>
+        <h1 class="brand-name">TaskFlow</h1>
+      </div>
+      <button id="themeToggle" class="theme-btn" aria-label="Toggle dark/light theme" title="Toggle Theme">
+        <span class="theme-icon-dark">🌙</span>
+        <span class="theme-icon-light">☀️</span>
+      </button>
+    </header>
+
+    <!-- STATS CARDS -->
+    <section class="stats-section" aria-label="Task statistics">
+      <div class="stat-card" id="statTotal">
+        <p class="stat-number" id="totalCount">0</p>
+        <p class="stat-label">Total Tasks</p>
+      </div>
+      <div class="stat-card stat-card--completed" id="statCompleted">
+        <p class="stat-number" id="completedCount">0</p>
+        <p class="stat-label">Completed</p>
+      </div>
+      <div class="stat-card stat-card--pending" id="statPending">
+        <p class="stat-number" id="pendingCount">0</p>
+        <p class="stat-label">Pending</p>
+      </div>
+    </section>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-container" aria-label="Task completion progress">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <p class="progress-label" id="progressLabel">0% complete</p>
+    </div>
+
+    <!-- ADD TASK FORM -->
+    <section class="add-task-section" aria-label="Add a new task">
+      <form class="add-task-form" id="addTaskForm" novalidate>
+        <div class="form-row">
+          <input
+            type="text"
+            id="taskInput"
+            class="task-input"
+            placeholder="What needs to be done? ✍️"
+            maxlength="150"
+            autocomplete="off"
+            aria-label="New task description"
+            required
+          />
+          <select id="prioritySelect" class="priority-select" aria-label="Task priority">
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="high">🔴 High</option>
+            <option value="low">🟢 Low</option>
+          </select>
+          <button type="submit" class="add-btn" id="addBtn" aria-label="Add task">
+            <span class="add-btn-icon">+</span>
+            <span class="add-btn-text">Add Task</span>
+          </button>
+        </div>
+        <p class="char-counter" id="charCounter">0 / 150</p>
+      </form>
+    </section>
+
+    <!-- SEARCH & FILTER -->
+    <div class="controls-section">
+      <div class="search-wrapper">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="search"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search tasks..."
+          aria-label="Search tasks"
+        />
+        <button class="search-clear-btn" id="searchClear" aria-label="Clear search" hidden>✕</button>
+      </div>
+      <div class="filter-tabs" role="tablist" aria-label="Filter tasks">
+        <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true" id="filterAll">All</button>
+        <button class="filter-tab" data-filter="pending" role="tab" aria-selected="false" id="filterPending">Pending</button>
+        <button class="filter-tab" data-filter="completed" role="tab" aria-selected="false" id="filterCompleted">Completed</button>
+      </div>
+    </div>
+
+    <!-- PRIORITY FILTER PILLS -->
+    <div class="priority-pills" role="group" aria-label="Filter by priority">
+      <button class="priority-pill active" data-priority="all">All Priorities</button>
+      <button class="priority-pill pill-high" data-priority="high">🔴 High</button>
+      <button class="priority-pill pill-medium" data-priority="medium">🟡 Medium</button>
+      <button class="priority-pill pill-low" data-priority="low">🟢 Low</button>
+    </div>
+
+    <!-- SORT CONTROL -->
+    <div class="sort-row">
+      <label for="sortSelect" class="sort-label">Sort by:</label>
+      <select id="sortSelect" class="sort-select" aria-label="Sort tasks">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="priority">Priority</option>
+        <option value="name">Name (A-Z)</option>
+      </select>
+      <button class="clear-all-btn" id="clearAllBtn" title="Delete all completed tasks">🗑 Clear Completed</button>
+    </div>
+
+    <!-- TASK LIST -->
+    <main class="task-list-container" aria-label="Task list">
+      <ul class="task-list" id="taskList" aria-live="polite" aria-label="Tasks"></ul>
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon">📋</div>
+        <h2 class="empty-title">No tasks found</h2>
+        <p class="empty-subtitle">Add a new task above to get started!</p>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <p>Built with ❤️ using HTML, CSS &amp; JavaScript &nbsp;·&nbsp; Data saved in localStorage</p>
+    </footer>
+
+  </div><!-- /.app-wrapper -->
+
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="editModalTitle">✏️ Edit Task</h2>
+        <button class="modal-close-btn" id="modalClose" aria-label="Close edit dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <label for="editInput" class="modal-label">Task Description</label>
+        <textarea id="editInput" class="edit-textarea" rows="3" maxlength="150" aria-label="Edit task description"></textarea>
+        <p class="char-counter" id="editCharCounter">0 / 150</p>
+        <label for="editPriority" class="modal-label">Priority</label>
+        <select id="editPriority" class="priority-select" aria-label="Edit task priority">
+          <option value="high">🔴 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="cancelEdit">Cancel</button>
+        <button class="btn-save" id="saveEdit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-container" id="toastContainer" aria-live="assertive" aria-atomic="true"></div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
