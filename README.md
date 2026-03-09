@@ -63,7 +63,7 @@ TodoList
 
 Example:
 
-git clone https://github.com/your-repository-link.git
+[git clone https://github.com/your-repository-link.git](https://github.com/trushnakundale-boop/CodeAplha_TodoList)
 
 ---
 
